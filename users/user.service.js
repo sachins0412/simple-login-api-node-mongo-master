@@ -18,6 +18,7 @@ module.exports = {
 async function authenticate({ username, password }, ip) {
   const user = await User.findOne({ username });
   if (user && bcrypt.compareSync(password, user.hash)) {
+    //record login time and current-IP
     user.login.push({ date: new Date(), ip });
     await user.save();
     const { hash, ...userWithoutHash } = user.toObject();
@@ -84,14 +85,13 @@ async function _delete(id) {
 
 async function logout(id, ip) {
   const user = await User.findById(id).select("-hash");
-
+  //record logout time and current-IP
   user.logout.push({ date: new Date(), ip });
 
   await user.save();
 }
 
 async function getAudit(id) {
-  //   console.log(id);
   const user = await User.findById(id).select("-hash");
   if (user.role.toLowerCase() != "auditor") {
     throw { name: "Unauthorized" };

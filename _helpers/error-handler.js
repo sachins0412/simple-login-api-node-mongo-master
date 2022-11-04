@@ -15,7 +15,7 @@ function errorHandler(err, req, res, next) {
     // jwt authentication error
     return res.status(401).json({ message: "Invalid Token" });
   }
-
+  //user role not 'auditor' when calling /audit
   if (err.name === "Unauthorized") {
     return res
       .status(401)
